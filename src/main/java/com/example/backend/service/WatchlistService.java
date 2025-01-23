@@ -32,12 +32,28 @@ public class WatchlistService {
     }
 
     public List<WatchList> getUserWatchlists() {
-        return watchListRepository.findAll(); // Return all watchlists
+        User currentUser = getCurrentUser();
+        if (currentUser == null) {
+            throw new RuntimeException("Authentication required to fetch watchlists");
+        }
+        return watchListRepository.findByUserId(currentUser.getId());
     }
 
     public WatchList getWatchlistById(Long id) {
-        return watchListRepository.findById(id)
+        User currentUser = getCurrentUser();
+        if (currentUser == null) {
+            throw new RuntimeException("Authentication required to access watchlist");
+        }
+        
+        WatchList watchlist = watchListRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Watchlist not found"));
+            
+        // Only allow access if the user owns the watchlist
+        if (!watchlist.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("You can only access your own watchlists");
+        }
+        
+        return watchlist;
     }
 
     public WatchList createWatchlist(WatchList watchlist) {
