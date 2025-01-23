@@ -24,27 +24,18 @@ public class HoldingsService {
     }
 
     public List<Holdings> getAllHoldings() {
-        User user = getCurrentUser();
-        return getAllHoldings(user);
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return getAllHoldingsForUser(currentUser);
     }
 
-    public List<Holdings> getAllHoldings(User user) {
-        List<Holdings> holdings = holdingsRepository.findByUser(user);
-        log.info("Found {} holdings for user {}", holdings.size(), user.getEmail());
-        return holdings.stream()
-                .filter(h -> h.getQuantity() > 0)  // Only return holdings with positive quantity
-                .collect(Collectors.toList());
+    public List<Holdings> getAllHoldingsForUser(User user) {
+        return holdingsRepository.findByUser(user);
     }
 
     public Holdings getHoldingsBySymbol(String symbol) {
-        User user = getCurrentUser();
-        log.info("Fetching holdings for symbol: {} and user: {}", symbol, user.getEmail());
-        return holdingsRepository.findByUserAndStockSymbol(user, symbol)
-                .orElse(Holdings.builder()
-                        .stockSymbol(symbol)
-                        .quantity(0.0)
-                        .averagePrice(0.0)
-                        .build());
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return holdingsRepository.findByUserAndStockSymbol(currentUser, symbol)
+            .orElseThrow(() -> new RuntimeException("Holdings not found for symbol: " + symbol));
     }
 
     @Transactional
