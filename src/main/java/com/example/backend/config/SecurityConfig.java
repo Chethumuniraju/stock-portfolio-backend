@@ -40,13 +40,11 @@ public class SecurityConfig {
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/watchlists/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/stocks/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/portfolio-share/**").permitAll()
                 .requestMatchers("/api/watchlists/**").authenticated()
                 .requestMatchers("/api/stocks/**").authenticated()
                 .requestMatchers("/api/users/**").authenticated()
                 .requestMatchers("/api/holdings/**").authenticated()
                 .requestMatchers("/api/transactions/**").authenticated()
-                .requestMatchers("/api/portfolio-share/**").authenticated()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

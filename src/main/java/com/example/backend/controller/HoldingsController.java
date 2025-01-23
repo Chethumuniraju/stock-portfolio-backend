@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.model.Holdings;
 import com.example.backend.model.User;
 import com.example.backend.service.HoldingsService;
+import com.example.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/holdings")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://stock-portfolio-frontend.onrender.com"})
 public class HoldingsController {
     private final HoldingsService holdingsService;
+    private final UserService userService;
     private static final Logger log = LoggerFactory.getLogger(HoldingsController.class);
 
     @GetMapping
@@ -32,6 +34,19 @@ public class HoldingsController {
                 h.getStockSymbol(), h.getQuantity(), h.getAveragePrice()));
         
         return ResponseEntity.ok(holdings);
+    }
+
+    @GetMapping("/shared/{userId}")
+    public ResponseEntity<?> getSharedHoldings(@PathVariable Long userId) {
+        try {
+            log.info("Fetching shared holdings for user ID: {}", userId);
+            List<Holdings> holdings = holdingsService.getHoldingsByUserId(userId);
+            log.info("Found {} holdings for shared portfolio", holdings.size());
+            return ResponseEntity.ok(holdings);
+        } catch (Exception e) {
+            log.error("Error fetching shared holdings: {}", e.getMessage());
+            return ResponseEntity.badRequest().body("Error fetching shared portfolio: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{symbol}")
