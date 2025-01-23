@@ -25,6 +25,10 @@ public class HoldingsService {
 
     public List<Holdings> getAllHoldings() {
         User user = getCurrentUser();
+        return getAllHoldings(user);
+    }
+
+    public List<Holdings> getAllHoldings(User user) {
         List<Holdings> holdings = holdingsRepository.findByUser(user);
         log.info("Found {} holdings for user {}", holdings.size(), user.getEmail());
         return holdings.stream()
