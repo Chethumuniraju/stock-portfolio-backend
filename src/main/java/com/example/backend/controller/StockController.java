@@ -61,6 +61,34 @@ public class StockController {
         }
     }
 
+    @GetMapping("/{symbol}/fundamentals")
+    public ResponseEntity<Object> getFundamentals(@PathVariable String symbol) {
+        try {
+            log.info("Fetching fundamentals for symbol: {}", symbol);
+            String url = String.format("https://www.alphavantage.co/query?function=OVERVIEW&symbol=%s&apikey=%s", symbol, apiKey);
+            Object result = restTemplate.getForObject(url, Object.class);
+            log.info("Successfully fetched fundamentals for {}", symbol);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("Error fetching fundamentals: ", e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/{symbol}/financials")
+    public ResponseEntity<Object> getFinancials(@PathVariable String symbol) {
+        try {
+            log.info("Fetching financials for symbol: {}", symbol);
+            String url = String.format("https://www.alphavantage.co/query?function=CASH_FLOW&symbol=%s&apikey=%s", symbol, apiKey);
+            Object result = restTemplate.getForObject(url, Object.class);
+            log.info("Successfully fetched financials for {}", symbol);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("Error fetching financials: ", e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping("/news")
     public ResponseEntity<Object> getMarketNews() {
         try {
