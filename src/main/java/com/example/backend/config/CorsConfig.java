@@ -14,8 +14,9 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         
-        // Allow all origins for development
+        // Allow specific origins
         config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("https://stock-portfolio-frontend.onrender.com");
         
         // Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
         config.addAllowedMethod("*");
