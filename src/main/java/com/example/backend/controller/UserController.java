@@ -11,9 +11,19 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://stock-portfolio-frontend.onrender.com"})
 public class UserController {
     private final UserService userService;
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+        try {
+            UserDTO userDTO = userService.getUserById(userId);
+            return ResponseEntity.ok(userDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @PostMapping("/topup")
     public ResponseEntity<?> topUpBalance(@RequestBody Map<String, Object> request) {

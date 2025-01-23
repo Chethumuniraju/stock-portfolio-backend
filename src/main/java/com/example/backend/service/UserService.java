@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.UserDTO;
 import com.example.backend.model.User;
 import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,19 @@ public class UserService {
             throw new RuntimeException("No authenticated user found");
         }
         return (User) auth.getPrincipal();
+    }
+
+    public UserDTO getUserById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        return UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .mobileNo(user.getMobileNo())
+                .balance(user.getBalance())
+                .build();
     }
 
     @Transactional
